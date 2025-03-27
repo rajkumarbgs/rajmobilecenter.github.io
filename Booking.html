@@ -1,139 +1,273 @@
-<style>
-    * { font-family: Arial, sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #f4f4f4; padding: 10px; display: flex; justify-content: center; align-items: center; height: 100vh; }
-    .container { width: 100%; max-width: 100%; height: 200px; background: #fff; padding: 0px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
+  <style>  
+      /* General Styles */
+* {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    .row { display: flex; gap: 5px; }
-    .row input { flex: 1; height: 25px; font-size: 12px; padding: 2px; }
+body {
+    background: #f4f4f4;
+    padding: 10px;
+    display: flex;
+}
 
-    /* Circle Upload */
-    .image-upload { text-align: center; margin: 5px 0; display: flex; align-items: center; gap: 5px; }
-    .image-upload label { display: inline-block; width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: #ddd; position: relative; cursor: pointer; flex-shrink: 0; }
-    .image-upload label img { width: 100%; height: 100%; object-fit: cover; display: none; }
-    .image-upload label::before { content: "+"; font-size: 20px; color: #666; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+/* Container */
+.container {
+    width: 100%;
+    max-width: 350px;
+    background: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
 
-    /* Loading animation */
-    .loader { width: 40px; height: 40px; border-radius: 50%; border: 3px solid #ccc; border-top: 3px solid #3498db; animation: spin 1s linear infinite; display: none; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+/* Input Row */
+.row {
+    display: flex;
+    gap: 5px;
+}
 
-    input, button { width: 100%; height: 25px; margin-top: 2px; border: 1px solid #ddd; border-radius: 3px; font-size: 12px; padding: 2px; }
-    button { background: #28a745; color: white; border: none; cursor: pointer; }
-    button:hover { background: #218838; }
+.row input {
+    flex: 1;
+    height: 35px;
+    font-size: 14px;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+}
 
-    #bookingForm { display: block; }
-    #preview { display: none; background: #f9f9f9; padding: 5px; border-radius: 3px; margin-top: 2px; text-align: center; font-size: 12px; }
-    #preview img { width: 40px; height: 40px; border-radius: 50%; margin: 2px auto; display: block; }
-</style>
+.row input:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+}
 
-<div class="container">
-    <div id="bookingForm">
-        <div class="row">
-            <input type="text" id="name" placeholder="Name">
-            <input type="tel" id="phoneNumber" placeholder="Phone">
-        </div>
+/* Modern Textarea */
+textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    resize: none;
+    background: #f9f9f9;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
-        <div class="image-upload">
-            <label for="phoneImage" id="imageLabel">
-                <div class="loader" id="loadingAnimation"></div>
-                <img id="previewImg" alt="Upload Image">
-            </label>
-            <input type="file" id="phoneImage" accept="image/*" style="display:none;">
-            <input type="text" id="phoneModel" placeholder="Phone Model">
-        </div>
+textarea:focus {
+    border-color: #28a745;
+    background: #fff;
+    box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
+}
 
-        <input type="text" id="problem" placeholder="Problem">
-        <button onclick="uploadImage()">Preview</button>
-    </div>
+/* Image Upload (Circle Button) */
+.image-upload {
+    text-align: center;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
 
-    <div id="preview">
-        <p><b>Name:</b> <span id="pName"></span></p>
-        <p><b>Phone:</b> <span id="pPhone"></span></p>
-        <p><b>Model:</b> <span id="pModel"></span></p>
-        <p><b>Problem:</b> <span id="pProblem"></span></p>
-        <img id="pImage" alt="Uploaded Image">
-        <button onclick="submitBooking()">Confirm</button>
-    </div>
-</div>
+.image-upload label {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #ddd;
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+}
 
-<script>
-    let imgURL = "";
+/* Image inside circle */
+.image-upload label img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
 
-    document.getElementById("phoneImage").addEventListener("change", function(event) {
-        let file = event.target.files[0];
-        if (file) {
-            document.getElementById("loadingAnimation").style.display = "block"; // Show loading animation
-            document.getElementById("previewImg").style.display = "none";
+/* Plus sign centered */
+.image-upload label::before {
+    content: "+";
+    font-size: 20px;
+    color: #666;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+}
 
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                setTimeout(() => {
-                    document.getElementById("previewImg").src = e.target.result;
-                    document.getElementById("previewImg").style.display = "block";
-                    document.getElementById("loadingAnimation").style.display = "none"; // Hide loading animation
-                }, 1000); // Simulating upload delay
-            };
-            reader.readAsDataURL(file);
-        }
-    });
+/* Loading animation centered */
+.loader {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid #ccc;
+    border-top: 3px solid #3498db;
+    animation: spin 1s linear infinite;
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
 
-    async function uploadImage() {
-        let file = document.getElementById("phoneImage").files[0];
-        if (!file) return alert("Please select an image.");
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
 
-        document.getElementById("loadingAnimation").style.display = "block"; // Show loading
+/* Button Styles */
+input, button {
+    width: 100%;
+    height: 35px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    padding: 5px;
+    outline: none;
+}
 
-        let formData = new FormData();
-        formData.append("image", file);
+button {
+    background: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s ease-in-out;
+}
 
-        let res = await fetch("https://api.imgur.com/3/image", {
-            method: "POST",
-            headers: { "Authorization": "Client-ID aca6d2502f5bfd8" },
-            body: formData
-        });
+button:hover {
+    background: #218838;
+}
 
-        let data = await res.json();
-        imgURL = data.data.link || "";
-        document.getElementById("loadingAnimation").style.display = "none"; // Hide loading
+/* Preview Section */
+#bookingForm {
+    display: block;
+}
 
-        if (!imgURL) return alert("Image upload failed.");
-        previewBooking();
-    }
+#preview {
+    display: none;
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 14px;
+}
 
-    function previewBooking() {
-        document.getElementById("pName").innerText = document.getElementById("name").value;
-        document.getElementById("pPhone").innerText = document.getElementById("phoneNumber").value;
-        document.getElementById("pModel").innerText = document.getElementById("phoneModel").value;
-        document.getElementById("pProblem").innerText = document.getElementById("problem").value;
-        document.getElementById("pImage").src = imgURL;
+#preview img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin: 5px auto;
+    display: block;
+}
+      </style>  
 
-        document.getElementById("bookingForm").style.display = "none";
-        document.getElementById("preview").style.display = "block";
-    }
 
-    async function submitBooking() {
-        let booking = {
-            id: Date.now(),
-            name: document.getElementById("pName").innerText,
-            phoneNumber: document.getElementById("pPhone").innerText,
-            phoneModel: document.getElementById("pModel").innerText,
-            problem: document.getElementById("pProblem").innerText,
-            imageUrl: imgURL,
-            bookingTime: new Date().toISOString()
-        };
+<div class="container">  
+    <div id="bookingForm">  
+        <div class="row">  
+            <input type="text" id="name" placeholder="Name">  
+            <input type="tel" id="phoneNumber" placeholder="Phone">  
+        </div>  
 
-        let res = await fetch("https://jsonblob.com/api/jsonBlob/1354355806182760448/latest");
-        let data = await res.json();
+        <div class="image-upload">  
+            <label for="phoneImage" id="imageLabel">  
+                <div class="loader" id="loadingAnimation"></div>  
+                <img id="previewImg" alt="Upload Image">  
+            </label>  
+            <input type="file" id="phoneImage" accept="image/*" style="display:none;">  
+            <input type="text" id="phoneModel" placeholder="Phone Model">  
+        </div>  
 
-        data.bookings = data.bookings || [];
-        data.bookings.push(booking);
+        <textarea id="problem" placeholder="Describe the problem..."></textarea>  
+        <button onclick="uploadImage()">Preview</button>  
+    </div>  
 
-        await fetch("https://jsonblob.com/api/jsonBlob/1354355806182760448", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        });
+    <div id="preview">  
+        <p><b>Name:</b> <span id="pName"></span></p>  
+        <p><b>Phone:</b> <span id="pPhone"></span></p>  
+        <p><b>Model:</b> <span id="pModel"></span></p>  
+        <p><b>Problem:</b> <span id="pProblem"></span></p>  
+        <img id="pImage" alt="Uploaded Image">  
+        <button onclick="submitBooking()">Confirm</button>  
+    </div>  
+</div>  
 
-        alert("Booking Confirmed!");
-        location.reload();
-    }
-</script>
+<script>  
+    let imgURL = "";  
+
+    document.getElementById("phoneImage").addEventListener("change", function(event) {  
+        let file = event.target.files[0];  
+        if (file) {  
+            document.getElementById("loadingAnimation").style.display = "block"; // Show loading animation  
+            document.getElementById("previewImg").style.display = "none";  
+
+            let reader = new FileReader();  
+            reader.onload = function(e) {  
+                setTimeout(() => {  
+                    document.getElementById("previewImg").src = e.target.result;  
+                    document.getElementById("previewImg").style.display = "block";  
+                    document.getElementById("loadingAnimation").style.display = "none"; // Hide loading animation  
+                }, 1000); // Simulating upload delay  
+            };  
+            reader.readAsDataURL(file);  
+        }  
+    });  
+
+    async function uploadImage() {  
+        let file = document.getElementById("phoneImage").files[0];  
+        if (!file) return alert("Please select an image.");  
+
+        document.getElementById("loadingAnimation").style.display = "block"; // Show loading  
+
+        let formData = new FormData();  
+        formData.append("image", file);  
+
+        let res = await fetch("https://api.imgur.com/3/image", {  
+            method: "POST",  
+            headers: { "Authorization": "Client-ID aca6d2502f5bfd8" },  
+            body: formData  
+        });  
+
+        let data = await res.json();  
+        imgURL = data.data.link || "";  
+        document.getElementById("loadingAnimation").style.display = "none"; // Hide loading  
+
+        if (!imgURL) return alert("Image upload failed.");  
+        previewBooking();  
+    }  
+
+    function previewBooking() {  
+        document.getElementById("pName").innerText = document.getElementById("name").value;  
+        document.getElementById("pPhone").innerText = document.getElementById("phoneNumber").value;  
+        document.getElementById("pModel").innerText = document.getElementById("phoneModel").value;  
+        document.getElementById("pProblem").innerText = document.getElementById("problem").value;  
+        document.getElementById("pImage").src = imgURL;  
+
+        document.getElementById("bookingForm").style.display = "none";  
+        document.getElementById("preview").style.display = "block";  
+    }  
+
+    function submitBooking() {  
+        alert("Booking Confirmed!");  
+        location.reload();  
+    }  
+</script>  
